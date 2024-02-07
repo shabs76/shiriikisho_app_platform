@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shirikisho_drivers/major_screens/account/account_main.dart';
 import 'package:shirikisho_drivers/major_screens/home/home_main.dart';
+import 'package:shirikisho_drivers/major_screens/malipo/malipo_main.dart';
+import 'package:shirikisho_drivers/major_screens/services/services_main.dart';
+import 'package:shirikisho_drivers/major_screens/social/social_main_page.dart';
 
 class DestinationControl extends StatefulWidget {
   final int takenPageIndex;
@@ -15,9 +18,9 @@ class DestinationControl extends StatefulWidget {
 class _DestinationControlState extends State<DestinationControl> {
   List<Widget> widgetsOptions = <Widget>[
     const HomeMain(),
-    const HomeMain(),
-    const HomeMain(),
-    const HomeMain(),
+    const ServicesMainPage(),
+    const MalipoMainPage(),
+    const SocialMainPage(),
     const AccountMain(),
   ];
   @override

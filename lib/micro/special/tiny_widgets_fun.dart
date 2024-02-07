@@ -215,6 +215,46 @@ class TinyComponents {
     );
   }
 
+  Widget appLikeServiceButton(
+      BuildContext context,
+      String serviceName,
+      String serviceId,
+      Function cliFun,
+      double wid,
+      double het,
+      Color cColor,
+      Widget chCont) {
+    return SizedBox(
+      width: wid,
+      height: het,
+      child: InkWell(
+        onTap: () {
+          cliFun(serviceId);
+        },
+        child: Column(
+          children: [
+            SizedBox(
+              width: wid - 34,
+              height: wid - 34,
+              child: Card(
+                elevation: 0,
+                color: cColor,
+                child: Padding(
+                  padding: EdgeInsets.all(wid < 100 ? 8 : 15),
+                  child: chCont,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: wid < 100 ? 3 : 5,
+            ),
+            Text(serviceName),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget notFoundWidget(BuildContext context, String message, String butonName,
       Function actionBtn) {
     return Center(
@@ -243,6 +283,49 @@ class TinyComponents {
         ],
       ),
     );
+  }
+
+  void popLoading({required String descrip}) {
+    Get.dialog(
+        Dialog(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10), color: Colors.white),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 90,
+                  width: 100,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF24B42E),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  descrip,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 13),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+              ],
+            ),
+          ),
+        ),
+        barrierDismissible: false);
   }
 
   void popupWithInfo(

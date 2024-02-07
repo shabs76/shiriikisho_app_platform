@@ -28,8 +28,12 @@ class ParkAreaModule {
   final String parkId;
   final String parkName;
   final int parkSize;
+  final String wardId;
   ParkAreaModule(
-      {required this.parkId, required this.parkName, required this.parkSize});
+      {required this.parkId,
+      required this.parkName,
+      required this.parkSize,
+      required this.wardId});
 
   factory ParkAreaModule.fromJson(Map<String, dynamic> json) {
     return switch (json) {
@@ -37,9 +41,105 @@ class ParkAreaModule {
         'park_id': String parkId,
         'park_name': String parkName,
         'park_size': int parkSize,
+        'ward': String wardId,
       } =>
-        ParkAreaModule(parkId: parkId, parkName: parkName, parkSize: parkSize),
+        ParkAreaModule(
+            parkId: parkId,
+            parkName: parkName,
+            parkSize: parkSize,
+            wardId: wardId),
       _ => throw const FormatException('Failed to unload parking areas'),
+    };
+  }
+}
+
+class ChamaModule {
+  final String chamaId;
+  final String chamaName;
+  final String chamaPhone;
+  ChamaModule(
+      {required this.chamaId,
+      required this.chamaName,
+      required this.chamaPhone});
+
+  factory ChamaModule.fromJson(Map<String, dynamic> json) {
+    return switch (json) {
+      {
+        'chama_id': String chamaId,
+        'jina': String chamaName,
+        'simu': String chamaPhone,
+      } =>
+        ChamaModule(
+            chamaId: chamaId, chamaName: chamaName, chamaPhone: chamaPhone),
+      _ => throw const FormatException('Failed to unload parties (chama)'),
+    };
+  }
+}
+
+class RegionsModule {
+  String regionName;
+  String regId;
+  String contryId;
+
+  RegionsModule({
+    required this.contryId,
+    required this.regId,
+    required this.regionName,
+  });
+
+  factory RegionsModule.fromJson(Map<String, dynamic> json) {
+    return switch (json) {
+      {
+        'region_name': String regionName,
+        'region_id': String regId,
+        'country_id': String contryId
+      } =>
+        RegionsModule(contryId: contryId, regId: regId, regionName: regionName),
+      _ => throw const FormatException('Failed to unload regions'),
+    };
+  }
+}
+
+class DistrictModule {
+  String distName;
+  String distId;
+  String regId;
+  DistrictModule({
+    required this.distId,
+    required this.distName,
+    required this.regId,
+  });
+  factory DistrictModule.fromJson(Map<String, dynamic> json) {
+    return switch (json) {
+      {
+        'district_id': String distId,
+        'district_name': String distName,
+        'region_id': String regId
+      } =>
+        DistrictModule(distId: distId, distName: distName, regId: regId),
+      _ => throw const FormatException('Failed to unload districts'),
+    };
+  }
+}
+
+class WardsModule {
+  String wardName;
+  String wardId;
+  String distId;
+  WardsModule({
+    required this.distId,
+    required this.wardId,
+    required this.wardName,
+  });
+  factory WardsModule.fromJson(Map<String, dynamic> json) {
+    return switch (json) {
+      {
+        'ward_id': String wardId,
+        'ward_name': String wardName,
+        'district_id': String distId
+      } =>
+        WardsModule(distId: distId, wardId: wardId, wardName: wardName),
+      _ => throw const FormatException('Failed to unload wards'),
     };
   }
 }
@@ -47,9 +147,20 @@ class ParkAreaModule {
 class RegistrationGetInfo {
   List<VehiclesTypesModule> vehicles;
   List<ParkAreaModule> park;
+  List<RegionsModule> regions;
+  List<DistrictModule> districts;
+  List<WardsModule> wards;
+  List<ChamaModule> chamas;
   String message;
-  RegistrationGetInfo(
-      {this.message = '', required this.park, required this.vehicles});
+  RegistrationGetInfo({
+    this.message = '',
+    required this.park,
+    required this.vehicles,
+    required this.districts,
+    required this.regions,
+    required this.wards,
+    required this.chamas,
+  });
 }
 
 class SubmitDriverDetailsModule {
@@ -71,10 +182,14 @@ class SubmitDriverDetailsModule {
   String idNumber;
   String idPicture;
   String insurance;
+  String chama;
+  String kinName;
+  String kinPhone;
   String passport;
   String verid;
   SubmitDriverDetailsModule(
-      {required this.dob,
+      {required this.chama,
+      required this.dob,
       required this.email,
       required this.fname,
       required this.gender,
@@ -82,6 +197,8 @@ class SubmitDriverDetailsModule {
       required this.idPicture,
       required this.idType,
       required this.insurance,
+      required this.kinName,
+      required this.kinPhone,
       required this.licenceNumber,
       required this.lname,
       required this.mname,

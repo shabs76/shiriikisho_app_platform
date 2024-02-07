@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:shirikisho_drivers/controlers/input_selects_data_list.dart';
 import 'package:shirikisho_drivers/controlers/registration_info_controllers.dart';
 
-class PersonMiddleware extends GetMiddleware {
+class ParkPageMiddleware extends GetMiddleware {
   final SubmitDriverDetailsController subData =
       Get.put(SubmitDriverDetailsController());
   final RegistrationInputListController inputsList =
@@ -14,6 +14,19 @@ class PersonMiddleware extends GetMiddleware {
             inputsList.regiList.value.park.isNotEmpty
         ? null
         : const RouteSettings(name: '/registration');
+  }
+}
+
+class PersonMiddleware extends GetMiddleware {
+  final SubmitDriverDetailsController subData =
+      Get.put(SubmitDriverDetailsController());
+  final RegistrationInputListController inputsList =
+      Get.put(RegistrationInputListController());
+  @override
+  RouteSettings? redirect(String? route) {
+    return subData.subData.value.parkArea != ''
+        ? null
+        : const RouteSettings(name: '/reg/park');
   }
 }
 

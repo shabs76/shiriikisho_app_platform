@@ -102,6 +102,15 @@ bool validatePlateNumber(String plateNumber) {
   }
 }
 
+bool isDateString(String str) {
+  try {
+    DateTime.parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 // image id urlProcessor
 String imageProcessorFromID(String imageD) {
   Map<String, dynamic> logData = DriverPrefences.getLoggedinDetails();

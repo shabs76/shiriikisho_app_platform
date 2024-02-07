@@ -161,7 +161,7 @@ class _MobileMainState extends State<MobileMain>
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            Get.toNamed('/');
+                            Get.toNamed('/sign');
                           },
                           style: appStyles.defaultButtonStyles(),
                           child: const Text('Sawa'))
@@ -184,7 +184,7 @@ class _MobileMainState extends State<MobileMain>
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            Get.toNamed('/');
+                            Get.toNamed('/sign');
                           },
                           style: appStyles.defaultButtonStyles(),
                           child: const Text('Sawa'))
@@ -202,8 +202,8 @@ class _MobileMainState extends State<MobileMain>
       bottomNavigationBar: Container(
         decoration: BoxDecoration(color: Colors.white, boxShadow: [
           BoxShadow(
-              blurRadius: 3,
-              spreadRadius: 1,
+              blurRadius: 2,
+              spreadRadius: 0,
               color: Colors.blueGrey.withOpacity(0.3),
               offset: const Offset(0, -1))
         ]),

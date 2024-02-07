@@ -1,14 +1,14 @@
 import 'dart:io';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:shirikisho_drivers/apis/post_apis.dart';
 import 'package:shirikisho_drivers/controlers/registration_info_controllers.dart';
 import 'package:shirikisho_drivers/major_screens/image_uploads/image_upload_screen.dart';
-import 'package:shirikisho_drivers/micro/inputs/select_input.dart';
+import 'package:shirikisho_drivers/micro/inputs/select_with_search.dart';
 import 'package:shirikisho_drivers/micro/inputs/text_input.dart';
 import 'package:shirikisho_drivers/micro/special/picture_form_displayor.dart';
 import 'package:shirikisho_drivers/micro/special/picture_selector_card.dart';
@@ -23,6 +23,7 @@ class RegistrationCards extends StatefulWidget {
 }
 
 class _RegistrationCardsState extends State<RegistrationCards> {
+  final GlobalKey<DropdownSearchState<String>> dropdownCardType = GlobalKey();
   XFile? _pickedImage;
   String? _fIdPath;
 
@@ -398,7 +399,7 @@ class _RegistrationCardsState extends State<RegistrationCards> {
         imagePath: _fIdPath!);
     if (ans2Img.state != 'success') {
       setState(() {
-        _errorForm = ansImg.info;
+        _errorForm = ans2Img.info;
         _loading = false;
       });
       return 0;
@@ -483,7 +484,7 @@ class _RegistrationCardsState extends State<RegistrationCards> {
                           Get.back();
                           Get.delete<SubmitDriverDetailsController>(
                               force: true);
-                          Get.toNamed('/');
+                          Get.toNamed('/sign');
                         },
                         icon: const Icon(
                           Icons.close,
@@ -528,7 +529,7 @@ class _RegistrationCardsState extends State<RegistrationCards> {
                     onPressed: () {
                       Get.back();
                       Get.delete<SubmitDriverDetailsController>(force: true);
-                      Get.toNamed('/');
+                      Get.toNamed('/sign');
                     },
                     style: appStyles.defaultButtonStyles(),
                     child: const Text('Sawa'))
@@ -577,20 +578,21 @@ class _RegistrationCardsState extends State<RegistrationCards> {
         shrinkWrap: true,
         physics: const ScrollPhysics(),
         children: [
-          SelectInputNormal(
-              itemz: const ['Chagua', 'Sina', 'NIDA', 'Kura', 'Leseni'],
-              selecedFun: (item) {
-                setState(() {
-                  _typeOfId = item;
-                });
-              },
-              fillcolor: const Color(0xFFFFFFFF),
-              borderColor: const Color(0xFFC7D3DD),
-              focusedColor: Theme.of(context).colorScheme.primary,
-              icon: Symbols.expand_more_rounded,
-              icolor: Theme.of(context).colorScheme.primary.withOpacity(0.7),
-              labelText: "Aina ya Kitambulisho",
-              labelStyles: labelStyle),
+          SelectWithSearchInput(
+            borderColor: const Color(0xFFC7D3DD),
+            dropdownKey: dropdownCardType,
+            fillcolor: Colors.white,
+            focusedColor: Theme.of(context).colorScheme.primary,
+            itemz: const ['Chagua', 'Sina', 'NIDA', 'Kura', 'Leseni'],
+            selecedFun: (item) {
+              setState(() {
+                _typeOfId = item;
+              });
+            },
+            labelText: 'Aina ya Kitambulisho',
+            labelStyles: labelStyle,
+            selectedItem: _typeOfId,
+          ),
           _idNNumbeWigetCollection(),
           const SizedBox(
             height: 20,

@@ -11,6 +11,16 @@ class DriverIdOnReviewController extends GetxController {
   }
 }
 
+class DriverIDOnUpdateInfoController extends GetxController {
+  var driverIdOnUpdate = OnUpdateDriverId(driverId: '').obs;
+
+  void changeDriverOnUpdate({required String currentId}) {
+    driverIdOnUpdate.update((val) {
+      val!.driverId = currentId;
+    });
+  }
+}
+
 class DriverDetailsController extends GetxController {
   var driverDet = DriverDetailsModule(
           email: '',

@@ -89,7 +89,7 @@ class _MemberListPageState extends State<MemberListPage> {
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            Get.toNamed('/');
+                            Get.toNamed('/sign');
                           },
                           style: _appStyles.defaultButtonStyles(),
                           child: const Text('Sawa'))

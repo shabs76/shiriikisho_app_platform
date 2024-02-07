@@ -57,6 +57,8 @@ class TextFieldWithPreIcon extends StatelessWidget {
               prefixIcon: Icon(icon),
               prefixIconColor: icolor,
               hintText: hintTextz,
+              hintStyle:
+                  const TextStyle(color: Color.fromARGB(255, 173, 171, 171)),
               floatingLabelBehavior: FloatingLabelBehavior.always,
               contentPadding:
                   const EdgeInsets.only(left: 13.0, right: 5.0, top: 17.0),

@@ -21,10 +21,10 @@ class DriverDetailsShort extends StatelessWidget {
       children: [
         Text(
           driverNumber,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
         ),
         const SizedBox(
-          height: 1,
+          height: 3,
         ),
         Row(
           children: [

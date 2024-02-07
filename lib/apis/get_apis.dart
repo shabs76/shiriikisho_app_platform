@@ -17,7 +17,12 @@ class GetApisClass {
       final Map<String, dynamic> hdg = jsonDecode(regResponse.body);
       if (hdg.containsKey('state') && hdg['state'] == 'success') {
         final dataReg = hdg['data'];
-        if (dataReg['vehilces'] is List && dataReg['parks'] is List) {
+        if (dataReg['vehilces'] is List &&
+            dataReg['parks'] is List &&
+            dataReg['districts'] is List &&
+            dataReg['wards'] is List &&
+            dataReg['regions'] is List &&
+            dataReg["chamas"] is List) {
           List<VehiclesTypesModule> vehi = [];
           // add vehicle list
           for (var i = 0; i < dataReg['vehilces'].length; i++) {
@@ -31,21 +36,91 @@ class GetApisClass {
             ParkAreaModule prk = ParkAreaModule.fromJson(dataReg['parks'][l]);
             parki.add(prk);
           }
-          final sLv =
-              RegistrationGetInfo(park: parki, vehicles: vehi, message: '');
+          // deal with regions
+          List<RegionsModule> regis = [];
+          for (var i = 0; i < dataReg['regions'].length; i++) {
+            RegionsModule regx = RegionsModule.fromJson(dataReg['regions'][i]);
+            regis.add(regx);
+          }
+          // deal with districts
+          List<DistrictModule> distis = [];
+          for (var i = 0; i < dataReg['districts'].length; i++) {
+            DistrictModule dist =
+                DistrictModule.fromJson(dataReg['districts'][i]);
+            distis.add(dist);
+          }
+          // deal with wards
+          List<WardsModule> wardis = [];
+          for (var i = 0; i < dataReg['wards'].length; i++) {
+            WardsModule wards = WardsModule.fromJson(dataReg['wards'][i]);
+            wardis.add(wards);
+          }
+
+          // deal with chamas
+          List<ChamaModule> chamaz = [];
+          for (var i = 0; i < dataReg['chamas'].length; i++) {
+            ChamaModule chama = ChamaModule.fromJson(dataReg['chamas'][i]);
+            chamaz.add(chama);
+          }
+          final sLv = RegistrationGetInfo(
+              park: parki,
+              vehicles: vehi,
+              regions: regis,
+              districts: distis,
+              wards: wardis,
+              chamas: chamaz,
+              message: '');
           return sLv;
         } else {
           final eTesh = RegistrationGetInfo(
-              park: [], vehicles: [], message: 'Unable to format data correct');
+              park: [],
+              vehicles: [],
+              regions: [],
+              districts: [],
+              wards: [],
+              chamas: [],
+              message: 'Unable to format data correct');
           return eTesh;
         }
       } else {
         final eTesh = RegistrationGetInfo(
-            park: [], vehicles: [], message: hdg['data'].toString());
+            park: [],
+            vehicles: [],
+            districts: [],
+            regions: [],
+            wards: [],
+            chamas: [],
+            message: hdg['data'].toString());
         return eTesh;
       }
     } else {
       throw Exception('Unable to connect to the server');
+    }
+  }
+
+  Future<List<ChamaModule>> fetchChamaList() async {
+    try {
+      final regResponse = await http.get(Uri.parse('$coreUrl/get/chama'));
+      if (regResponse.statusCode == 200) {
+        final Map<String, dynamic> hdg = jsonDecode(regResponse.body);
+        if (hdg.containsKey('state') && hdg['state'] == 'success') {
+          final data = hdg['data'];
+          List<ChamaModule> chamaz = [];
+          for (var i = 0; i < data.length; i++) {
+            ChamaModule chama = ChamaModule.fromJson(data[i]);
+            chamaz.add(chama);
+          }
+          return chamaz;
+        } else {
+          List<ChamaModule> chamaz = [];
+          return chamaz;
+        }
+      } else {
+        throw Exception('Unable to connect to the server');
+      }
+    } catch (e) {
+      List<ChamaModule> hdg = [];
+      return hdg;
     }
   }
 

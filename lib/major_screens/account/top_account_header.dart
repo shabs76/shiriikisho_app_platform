@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'dart:math';
 
 import 'package:material_symbols_icons/symbols.dart';
@@ -22,32 +23,42 @@ class DelegateaccountTopSect extends SliverPersistentHeaderDelegate {
       child: Stack(fit: StackFit.expand, clipBehavior: Clip.none, children: [
         Opacity(
           opacity: 1 - shrinkPercentage,
-          child: Container(
-            height: 200,
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage('assets/images/shirikisho_profile.png'),
-                    fit: BoxFit.cover)),
-            child: Padding(
-              padding: const EdgeInsets.only(right: 10, bottom: 10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    userName,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600),
+          child: Column(
+            children: [
+              Container(
+                height:
+                    shrinkPercentage < 0.65 ? 250 * (1 - shrinkPercentage) : 10,
+                width: double.maxFinite,
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image:
+                            AssetImage('assets/images/shirikisho_profile.png'),
+                        fit: BoxFit.cover)),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 10, bottom: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        userName,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: shrinkPercentage < 0.7 ? 24 : 6,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              SizedBox(
+                height: shrinkPercentage < 65 ? 20 * (1 - shrinkPercentage) : 2,
+              ),
+            ],
           ),
         ),
         Positioned(
-            bottom: -40,
+            bottom: 0,
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Padding(
@@ -58,19 +69,23 @@ class DelegateaccountTopSect extends SliverPersistentHeaderDelegate {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Container(
-                        width: 100,
+                      SizedBox(
+                        width: 120,
                         height: 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              width: 2.5,
-                              color: Theme.of(context).colorScheme.primary),
-                        ),
                         child: Stack(clipBehavior: Clip.none, children: [
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  width: 2.5,
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
+                          ),
                           Positioned(
-                              top: -1,
-                              left: -1,
+                              top: 2,
+                              left: 2,
                               width: 96,
                               height: 96,
                               child: ClipOval(
@@ -85,7 +100,7 @@ class DelegateaccountTopSect extends SliverPersistentHeaderDelegate {
                                 ),
                               )),
                           Positioned(
-                              right: -20,
+                              right: 0,
                               bottom: 0,
                               child: ElevatedButton(
                                 onPressed: () {},
@@ -106,21 +121,26 @@ class DelegateaccountTopSect extends SliverPersistentHeaderDelegate {
                       SizedBox(
                         height: 100,
                         width: 100,
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Positioned(
-                              bottom: -25,
-                              right: 0,
-                              child: IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.settings_rounded,
-                                    color: Colors.green,
-                                    size: 40,
-                                  )),
-                            ),
-                          ],
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: IconButton(
+                                    onPressed: () {
+                                      Get.toNamed('/account/settings');
+                                    },
+                                    icon: const Icon(
+                                      Icons.settings_rounded,
+                                      color: Colors.green,
+                                      size: 40,
+                                    )),
+                              ),
+                            ],
+                          ),
                         ),
                       )
                     ],
@@ -161,7 +181,7 @@ class DelegateaccountTopSect extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 250;
+  double get maxExtent => 300;
 
   @override
   double get minExtent => 110;

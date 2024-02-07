@@ -19,9 +19,9 @@ class _LeaderSectionHomeState extends State<LeaderSectionHome> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Uratibu',
-          style: Theme.of(context).textTheme.displaySmall,
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
         ),
         const SizedBox(
           height: 7,

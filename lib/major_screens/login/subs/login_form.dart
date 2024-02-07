@@ -3,7 +3,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:shirikisho_drivers/apis/post_apis.dart';
 import 'package:shirikisho_drivers/controlers/registration_info_controllers.dart';
 import 'package:shirikisho_drivers/micro/inputs/text_input.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:shirikisho_drivers/micro/special/tiny_widgets_fun.dart';
 import 'package:shirikisho_drivers/micro/styles.dart';
 import 'package:get/get.dart';
 import 'package:shirikisho_drivers/module/registration_modules.dart';
@@ -18,7 +18,7 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final TextEditingController _passwordControler = TextEditingController();
-  String phonNum = '';
+  final TextEditingController _phoneNumberController = TextEditingController();
   String _errorForm = '';
   bool _loadingState = false;
   final PhoneInitVerificationCodeResponseController
@@ -26,12 +26,14 @@ class _LoginFormState extends State<LoginForm> {
       Get.put(PhoneInitVerificationCodeResponseController());
   final PostMainApis _postMainApis = PostMainApis();
   KishoStyles appStyles = KishoStyles();
+  final TinyComponents _tinyComponents = TinyComponents();
   Future<int> sendInitLoginInf() async {
     setState(() {
       _errorForm = '';
       _loadingState = true;
     });
-    if (!isValidPhoneNumber(phonNum)) {
+    if (!isValidPhoneNumber(
+        '+255${_phoneNumberController.text.substring(1)}')) {
       setState(() {
         _errorForm =
             'Namba ya simu sio sahihi. Tafadhali hakiki kabla ya kutuma';
@@ -48,7 +50,8 @@ class _LoginFormState extends State<LoginForm> {
 
     // now send login details
     VerificationResponseModule ans = await _postMainApis.loginInitPhone(
-        phone: phonNum.substring(1), password: _passwordControler.text);
+        phone: '255${_phoneNumberController.text.substring(1)}',
+        password: _passwordControler.text);
 
     if (ans.state != 'success') {
       setState(() {
@@ -63,6 +66,56 @@ class _LoginFormState extends State<LoginForm> {
     });
     _phoneInitVerificationCodeResponseController.updateRespos(ans);
     Get.toNamed('/login/code');
+    return 1;
+  }
+
+  Future<int> sendForgetPassInit() async {
+    if (!isValidPhoneNumber(
+        '+255${_phoneNumberController.text.substring(1)}')) {
+      setState(() {
+        _errorForm =
+            'Namba ya simu sio sahihi. Tafadhali hakiki kabla ya kutuma';
+        _loadingState = false;
+      });
+      return 0;
+    }
+    // now send changePass otp
+    _tinyComponents.popLoading(descrip: 'Inachambua ...');
+    VerificationResponseModule ans = await _postMainApis.forgetPassInitProce(
+        phone: '255${_phoneNumberController.text.substring(1)}');
+    Get.back();
+    if (ans.state != 'success') {
+      _tinyComponents.popupWithInfo(
+        heading: 'Tatizo',
+        nDescreption: ans.data,
+        icon: Symbols.error,
+        closeFun: () {
+          Get.back();
+        },
+        okayFun: () {
+          Get.back();
+        },
+        onColor: const Color.fromARGB(139, 252, 98, 98),
+        iColor: const Color(0xFFFF3636),
+      );
+      return 0;
+    }
+    _tinyComponents.popupWithInfo(
+      heading: 'Imefanikiwa',
+      nDescreption: ans.data,
+      icon: Symbols.done_rounded,
+      closeFun: () {
+        _phoneInitVerificationCodeResponseController.updateRespos(ans);
+        Get.back();
+        Get.toNamed('/change/password');
+      },
+      okayFun: () {
+        _phoneInitVerificationCodeResponseController.updateRespos(ans);
+        Get.back();
+        Get.toNamed('/change/password');
+      },
+    );
+
     return 1;
   }
 
@@ -122,48 +175,17 @@ class _LoginFormState extends State<LoginForm> {
         const SizedBox(
           height: 35,
         ),
-        SizedBox(
-          width: double.maxFinite,
-          child: Text(
-            'Phone Number',
-            style: labelStyle.copyWith(fontSize: 16),
-          ),
-        ),
-        const SizedBox(
-          height: 5,
-        ),
-        InternationalPhoneNumberInput(
-            inputDecoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(7.0),
-                focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(6)),
-                    borderSide:
-                        BorderSide(width: 1.0, color: Color(0xFFC7D3DD))),
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(6)),
-                    borderSide:
-                        BorderSide(width: 1.0, color: Color(0xFFC7D3DD))),
-                filled: true,
-                labelText: 'Enter phone number',
-                labelStyle: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white70),
-                fillColor: Color(0xFFFFFFFF),
-                hintText: 'eg. 0620466139'),
-            selectorConfig: const SelectorConfig(
-                setSelectorButtonAsPrefixIcon: true,
-                selectorType: PhoneInputSelectorType.BOTTOM_SHEET),
-            countries: const ['TZ'],
-            spaceBetweenSelectorAndTextField: 0,
-            onInputChanged: (PhoneNumber num) {
-              setState(() {
-                phonNum = num.phoneNumber!;
-              });
-            }),
-        const SizedBox(
-          height: 15,
-        ),
+        TextFieldNoIcon(
+            controller: _phoneNumberController,
+            borderColor: const Color(0xFFC7D3DD),
+            fillcolor: const Color(0xFFFFFFFF),
+            focusedColor: Theme.of(context).colorScheme.primary,
+            labelStyles: labelStyle,
+            labelText: 'Namba ya Simu',
+            type: TextInputType.text,
+            hintTextz: '0620466139',
+            maxlines: 1,
+            minLines: 1),
         TextFieldNoIcon(
             controller: _passwordControler,
             borderColor: const Color(0xFFC7D3DD),
@@ -180,9 +202,11 @@ class _LoginFormState extends State<LoginForm> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                sendForgetPassInit();
+              },
               child: const Text(
-                'Forget password?',
+                'Nimesahau Neno la Siri!',
                 style: TextStyle(fontSize: 15),
               ),
             ),
@@ -219,9 +243,7 @@ class _LoginFormState extends State<LoginForm> {
             Column(
               children: [
                 ElevatedButton(
-                    onPressed: () {
-                      Get.toNamed('/reg/cards');
-                    },
+                    onPressed: () {},
                     style: appStyles.roundButtonStyles().copyWith(
                         foregroundColor: MaterialStatePropertyAll(
                             Theme.of(context).primaryColor),

@@ -42,6 +42,7 @@ class _VerifyDriverDetailsState extends State<VerifyDriverDetails> {
   int checkForDriverInList() {
     if (_fullDriverDetailsController.fdriverDet.isEmpty) {
       undriver = FullDriverDetailsModule(
+          chama: '',
           dob: '',
           driverId: '',
           email: '',
@@ -51,6 +52,8 @@ class _VerifyDriverDetailsState extends State<VerifyDriverDetails> {
           idPicture: '',
           idType: '',
           insurance: '',
+          kinName: '',
+          kinPhone: '',
           licenceNumber: '',
           lname: '',
           mname: '',
@@ -70,6 +73,7 @@ class _VerifyDriverDetailsState extends State<VerifyDriverDetails> {
         final FullDriverDetailsModule drv =
             _fullDriverDetailsController.fdriverDet[i];
         undriver = FullDriverDetailsModule(
+            chama: drv.chama,
             dob: drv.dob,
             driverId: drv.driverId,
             email: drv.email,
@@ -79,6 +83,8 @@ class _VerifyDriverDetailsState extends State<VerifyDriverDetails> {
             idPicture: drv.idPicture,
             idType: drv.idType,
             insurance: drv.insurance,
+            kinName: drv.kinName,
+            kinPhone: drv.kinPhone,
             licenceNumber: drv.licenceNumber,
             lname: drv.lname,
             mname: drv.mname,
@@ -93,6 +99,7 @@ class _VerifyDriverDetailsState extends State<VerifyDriverDetails> {
       }
     }
     undriver = FullDriverDetailsModule(
+        chama: '',
         dob: '',
         driverId: '',
         email: '',
@@ -102,6 +109,8 @@ class _VerifyDriverDetailsState extends State<VerifyDriverDetails> {
         idPicture: '',
         idType: '',
         insurance: '',
+        kinName: '',
+        kinPhone: '',
         licenceNumber: '',
         lname: '',
         mname: '',
@@ -306,12 +315,16 @@ class _VerifyDriverDetailsState extends State<VerifyDriverDetails> {
         const SizedBox(
           height: 30,
         ),
-        DriverResidenceInfoReview(residenceInfo: undriver.residence),
+        DriverResidenceInfoReview(
+          residenceInfo: undriver.residence,
+          kinName: undriver.kinName,
+          chama: undriver.chama,
+        ),
         const SizedBox(
           height: 20,
         ),
         Image.network(
-          undriver.idPicture,
+          imageProcessorFromID(undriver.idPicture),
           width: MediaQuery.of(context).size.width * 0.9,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {

@@ -57,15 +57,15 @@ class _RegistrationCodeState extends State<RegistrationCode> {
     });
     // save verid
     _submitDriverDetailsController.updateVeridInfo(verid: resp.verid);
-    Get.toNamed('/reg/personal');
+    Get.toNamed('/reg/park');
     return 1;
   }
 
   @override
   Widget build(BuildContext context) {
     double nim = MediaQuery.of(context).size.height - 500;
-    if (nim <= 460) {
-      nim = 460;
+    if (nim <= 520) {
+      nim = 520;
     }
     return Scaffold(
       body: ListView(

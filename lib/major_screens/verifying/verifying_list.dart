@@ -56,7 +56,7 @@ class _VerifyingDriverListState extends State<VerifyingDriverList> {
               if (snapshot.data!.isEmpty) {
                 return tinyComponents.notFoundWidget(
                     context,
-                    'Hakuna dereva asie haikiwa kwenye kituo chako',
+                    'Hakuna dereva wa kuhakikiwa kwenye kituo chako',
                     'Sawa', () {
                   Get.offNamed('/mobile');
                 });
@@ -105,7 +105,7 @@ class _VerifyingDriverListState extends State<VerifyingDriverList> {
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            Get.toNamed('/');
+                            Get.toNamed('/sign');
                           },
                           style: _appStyles.defaultButtonStyles(),
                           child: const Text('Sawa'))

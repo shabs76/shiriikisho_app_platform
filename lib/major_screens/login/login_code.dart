@@ -49,21 +49,21 @@ class _LoginCodeState extends State<LoginCode> {
       _loadingState = true;
     });
 
-    DriverPrefences.setLoggedinDetails(
+    await DriverPrefences.setLoggedinDetails(
         logey: ansc.logKey, logess: ansc.logSess);
     Get.toNamed('/mobile');
     return 1;
   }
 
   void backwardFun() {
-    Get.toNamed('/');
+    Get.toNamed('/sign');
   }
 
   @override
   Widget build(BuildContext context) {
     double nim = MediaQuery.of(context).size.height - 340;
-    if (nim <= 500) {
-      nim = 500;
+    if (nim <= 520) {
+      nim = 520;
     }
     return Scaffold(
       body: ListView(

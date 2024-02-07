@@ -33,7 +33,7 @@ class _AccountMainState extends State<AccountMain> {
             ];
           },
           body: ListView(
-            padding: const EdgeInsets.only(left: 15, right: 15, top: 60),
+            padding: const EdgeInsets.only(left: 15, right: 15, top: 20),
             shrinkWrap: true,
             physics: const ScrollPhysics(),
             children: [
@@ -50,7 +50,7 @@ class _AccountMainState extends State<AccountMain> {
                 height: 60,
               ),
               Text(
-                'More Services, Coming Soon',
+                'More Services are Coming Soon',
                 style: Theme.of(context).textTheme.displayLarge,
               ),
               const Image(image: AssetImage('assets/images/chat.png'))

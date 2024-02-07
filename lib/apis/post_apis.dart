@@ -188,7 +188,10 @@ class PostMainApis {
         "id_picture": drData.idPicture,
         "passport": drData.passport,
         "verid": drData.verid,
-        "insurance": drData.insurance
+        "insurance": drData.insurance,
+        "kin_phone": drData.kinPhone,
+        "kin_name": drData.kinName,
+        "chama": drData.chama,
       };
       var resp = await http.post(Uri.parse('$coreUrl/drivers/registration'),
           headers: nHeaders, body: jsonEncode(sendData));
@@ -432,6 +435,303 @@ class PostMainApis {
     } catch (e) {
       return StateDataModule(
           data: 'Major program error has occurred while validating driver',
+          state: 'error');
+    }
+  }
+
+  // logout driver
+  Future<StateDataModule> logoutDriver() async {
+    try {
+      Map<String, dynamic> logData = DriverPrefences.getLoggedinDetails();
+      if (!logData.containsKey(DriverPrefences.logKey) ||
+          logData[DriverPrefences.logKey] == null ||
+          !logData.containsKey(DriverPrefences.logSess) ||
+          logData[DriverPrefences.logSess] == null) {
+        DriverPrefences.removeLoggedinDetails();
+        throw Exception('Missing login details. Please login first');
+      }
+      Map<String, String> lHeaders = {
+        'Content-Type': 'application/json',
+        'drlogkey': logData[DriverPrefences.logKey],
+        'drlogsess': logData[DriverPrefences.logSess]
+      };
+
+      var respx = await http.post(Uri.parse('$coreUrl/auth/logout'),
+          headers: lHeaders, body: jsonEncode({}));
+      if (respx.statusCode == 200) {
+        Map<String, dynamic> dbody = jsonDecode(respx.body);
+        if (dbody.containsKey('state') &&
+            dbody['state'] == 'success' &&
+            dbody.containsKey('data') &&
+            dbody['data'] is String) {
+          return StateDataModule(data: dbody['data'], state: dbody['state']);
+        } else if (dbody.containsKey('state') &&
+            dbody['state'] == 'success' &&
+            (!dbody.containsKey('data') || dbody['data'] is! String)) {
+          return StateDataModule(
+              data: 'Umejitoa kwenye akaunti yako.', state: dbody['state']);
+        } else if (dbody.containsKey('state') &&
+            dbody['state'] != 'success' &&
+            dbody.containsKey('adv') &&
+            dbody['data'] is String) {
+          DriverPrefences.removeLoggedinDetails();
+          return StateDataModule(
+              data:
+                  'Unahitaji kuingia upya kwenye akaunti yako kufanya tendo hili',
+              state: dbody['state']);
+        } else if (dbody.containsKey('state') &&
+            dbody['state'] != 'success' &&
+            dbody.containsKey('data') &&
+            dbody['data'] is String) {
+          return StateDataModule(data: dbody['data'], state: dbody['state']);
+        }
+        return StateDataModule(
+            data: 'Tatizo lisilo tarajiwa limejitokeza', state: 'error');
+      } else {
+        return StateDataModule(
+            data: 'Tatizo la kimtandao limejitokeza.', state: 'error');
+      }
+    } catch (e) {
+      return StateDataModule(
+          data: 'Major program error has occurred while loging out driver',
+          state: 'error');
+    }
+  }
+
+  // forget password initial
+  Future<VerificationResponseModule> forgetPassInitProce(
+      {required String phone}) async {
+    try {
+      var data = jsonEncode({
+        'phone': phone,
+      });
+      var bb = await http.post(Uri.parse('$coreUrl/auth/forget/pass/init'),
+          headers: nHeaders, body: data);
+      if (bb.statusCode == 200) {
+        Map<String, dynamic> bdody = jsonDecode(bb.body);
+        if (bdody.containsKey('state') && bdody['state'] == 'success') {
+          return VerificationResponseModule.fromJson(bdody);
+        } else if (bdody.containsKey('state') &&
+            bdody['state'] != 'success' &&
+            bdody.containsKey('data')) {
+          return VerificationResponseModule(
+              data: bdody['data'], otpId: '', state: 'error');
+        } else {
+          return VerificationResponseModule(
+              data: 'Tatizo lisilojulikana limejitokeza',
+              otpId: '',
+              state: 'error');
+        }
+      } else {
+        return VerificationResponseModule(
+            data: 'Unable to connect to the server', otpId: '', state: 'error');
+      }
+    } catch (e) {
+      return VerificationResponseModule(
+          data: 'Major error has occurred on the app #22',
+          otpId: '',
+          state: 'error');
+    }
+  }
+
+  // forget password last
+  Future<StateDataModule> forgetPassLastProcess(
+      {required String code,
+      required String password,
+      required String otpId}) async {
+    try {
+      Map<String, dynamic> sendData = {
+        'code': int.parse(code),
+        'otp_id': otpId,
+        'password': password
+      };
+      var snnd = await http.post(Uri.parse('$coreUrl/auth/forget/pass/last'),
+          headers: nHeaders, body: jsonEncode(sendData));
+      if (snnd.statusCode == 200) {
+        Map<String, dynamic> dbody = jsonDecode(snnd.body);
+        if (dbody.containsKey('state') &&
+            dbody['state'] == 'success' &&
+            dbody.containsKey('data') &&
+            dbody['data'] is String) {
+          return StateDataModule(data: dbody['data'], state: dbody['state']);
+        } else if (dbody.containsKey('state') &&
+            dbody['state'] == 'success' &&
+            (!dbody.containsKey('data') || dbody['data'] is! String)) {
+          return StateDataModule(
+              data: 'Umefanikiwa kubadili neno la siri', state: dbody['state']);
+        } else if (dbody.containsKey('state') &&
+            dbody['state'] != 'success' &&
+            dbody.containsKey('data') &&
+            dbody['data'] is String) {
+          return StateDataModule(data: dbody['data'], state: dbody['state']);
+        }
+        return StateDataModule(
+            data: 'Tatizo lisilo tarajiwa limejitokeza', state: 'error');
+      } else {
+        return StateDataModule(
+            data: 'Tatizo la kimtandao limejitokeza.', state: 'error');
+      }
+    } catch (e) {
+      return StateDataModule(
+          data: 'Major program error has occurred while changing password.',
+          state: 'error');
+    }
+  }
+
+  // resend code
+  Future<StateDataModule> resendCodeProce({required String otpId}) async {
+    try {
+      var data = jsonEncode({
+        'otp_id': otpId,
+      });
+      var ansx = await http.post(Uri.parse('$coreUrl/auth/code/resend'),
+          headers: nHeaders, body: data);
+      if (ansx.statusCode == 200) {
+        Map<String, dynamic> dbody = jsonDecode(ansx.body);
+        if (dbody.containsKey('state') &&
+            dbody['state'] == 'success' &&
+            dbody.containsKey('data') &&
+            dbody['data'] is String) {
+          return StateDataModule(data: dbody['data'], state: dbody['state']);
+        } else if (dbody.containsKey('state') &&
+            dbody['state'] == 'success' &&
+            (!dbody.containsKey('data') || dbody['data'] is! String)) {
+          return StateDataModule(
+              data: 'Umefanikiwa kutuma namba ya uthibitisho',
+              state: dbody['state']);
+        } else if (dbody.containsKey('state') &&
+            dbody['state'] != 'success' &&
+            dbody.containsKey('data') &&
+            dbody['data'] is String) {
+          return StateDataModule(data: dbody['data'], state: dbody['state']);
+        }
+        return StateDataModule(
+            data: 'Tatizo lisilo tarajiwa limejitokeza', state: 'error');
+      } else {
+        return StateDataModule(
+            data: 'Tatizo la kimtandao limejitokeza.', state: 'error');
+      }
+    } catch (e) {
+      return StateDataModule(
+          data: 'Major program error has occurred while resending code.',
+          state: 'error');
+    }
+  }
+
+  /// fetch driver details for update
+  Future<List<FullDriverDetailsModule>> fetchUpdateDriverDetails(
+      driverId) async {
+    try {
+      Map<String, dynamic> logData = DriverPrefences.getLoggedinDetails();
+      if (!logData.containsKey(DriverPrefences.logKey) ||
+          logData[DriverPrefences.logKey] == null ||
+          !logData.containsKey(DriverPrefences.logSess) ||
+          logData[DriverPrefences.logSess] == null) {
+        DriverPrefences.removeLoggedinDetails();
+        throw Exception('Missing login details. Please login first');
+      }
+      Map<String, String> lHeaders = {
+        'Content-Type': 'application/json',
+        'drlogkey': logData[DriverPrefences.logKey],
+        'drlogsess': logData[DriverPrefences.logSess]
+      };
+      var data = jsonEncode({
+        'driverId': driverId,
+      });
+      final resp = await http.post(
+          Uri.parse('$coreUrl/auth/update/driver/major/init'),
+          headers: lHeaders,
+          body: data);
+      if (resp.statusCode == 200) {
+        Map<String, dynamic> body = jsonDecode(resp.body);
+        if (body.containsKey('state') &&
+            body['state'] == 'success' &&
+            body.containsKey('data') &&
+            body['data'] is List) {
+          List<FullDriverDetailsModule> members = [];
+          for (var i = 0; i < body['data'].length; i++) {
+            FullDriverDetailsModule mbr =
+                FullDriverDetailsModule.fromJson(body['data'][i]);
+            members.add(mbr);
+          }
+          return members;
+        } else if (body.containsKey('state') &&
+            body['state'] == 'success' &&
+            body.containsKey('data') &&
+            body['data'] is! List) {
+          List<FullDriverDetailsModule> drivers = [];
+          return drivers;
+        } else if (body.containsKey('state') &&
+            body['state'] != 'success' &&
+            body.containsKey('adv') &&
+            body['adv'] == 'logout') {
+          throw Exception('logout');
+        } else if (body.containsKey('state') &&
+            body['state'] != 'success' &&
+            body.containsKey('data') &&
+            body['data'] is String) {
+          throw Exception(body['data']);
+        }
+        throw Exception(
+            'Tatizo lisilotarajiwa limejitokeza. Tafadhali jaribu tena baadae');
+      } else {
+        throw Exception('Unable to connected to the server');
+      }
+    } catch (e) {
+      throw Exception('Network error, #112');
+    }
+  }
+
+  // send update details
+  Future<StateDataModule> sendUpdateDetails(
+      {required Map<String, dynamic> updDets}) async {
+    try {
+      Map<String, dynamic> logData = DriverPrefences.getLoggedinDetails();
+      if (!logData.containsKey(DriverPrefences.logKey) ||
+          logData[DriverPrefences.logKey] == null ||
+          !logData.containsKey(DriverPrefences.logSess) ||
+          logData[DriverPrefences.logSess] == null) {
+        DriverPrefences.removeLoggedinDetails();
+        throw Exception('Missing login details. Please login first');
+      }
+      Map<String, String> lHeaders = {
+        'Content-Type': 'application/json',
+        'drlogkey': logData[DriverPrefences.logKey],
+        'drlogsess': logData[DriverPrefences.logSess]
+      };
+      final ansx = await http.post(
+          Uri.parse('$coreUrl/auth/update/driver/major/last'),
+          headers: lHeaders,
+          body: jsonEncode(updDets));
+      if (ansx.statusCode == 200) {
+        Map<String, dynamic> dbody = jsonDecode(ansx.body);
+        if (dbody.containsKey('state') &&
+            dbody['state'] == 'success' &&
+            dbody.containsKey('data') &&
+            dbody['data'] is String) {
+          return StateDataModule(data: dbody['data'], state: dbody['state']);
+        } else if (dbody.containsKey('state') &&
+            dbody['state'] == 'success' &&
+            (!dbody.containsKey('data') || dbody['data'] is! String)) {
+          return StateDataModule(
+              data: 'Umefanikiwa kufanya usahihi wa taarifa zako',
+              state: dbody['state']);
+        } else if (dbody.containsKey('state') &&
+            dbody['state'] != 'success' &&
+            dbody.containsKey('data') &&
+            dbody['data'] is String) {
+          return StateDataModule(data: dbody['data'], state: dbody['state']);
+        }
+        return StateDataModule(
+            data: 'Tatizo lisilo tarajiwa limejitokeza', state: 'error');
+      } else {
+        return StateDataModule(
+            data: 'Tatizo la kimtandao limejitokeza.', state: 'error');
+      }
+    } catch (e) {
+      return StateDataModule(
+          data:
+              'Major program error has occurred while sending update details.',
           state: 'error');
     }
   }

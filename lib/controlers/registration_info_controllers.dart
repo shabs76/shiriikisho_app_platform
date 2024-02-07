@@ -3,6 +3,7 @@ import 'package:shirikisho_drivers/module/registration_modules.dart';
 
 class SubmitDriverDetailsController extends GetxController {
   var subData = SubmitDriverDetailsModule(
+          chama: '',
           dob: '',
           email: '',
           fname: '',
@@ -13,6 +14,8 @@ class SubmitDriverDetailsController extends GetxController {
           insurance: '',
           licenceNumber: '',
           lname: '',
+          kinName: '',
+          kinPhone: '',
           mname: '',
           parkArea: '',
           passport: '',
@@ -47,14 +50,22 @@ class SubmitDriverDetailsController extends GetxController {
     });
   }
 
+  void updateParkingInfo({required String parkArea, required String chama}) {
+    subData.update((val) {
+      val!.parkArea = parkArea;
+      val.chama = chama;
+    });
+  }
+
   void updatePersonalInfo({
     required String residence,
     required String relation,
     required String tinNumber,
     required String licenceNumber,
-    required String parkArea,
     required String dob,
     required String gender,
+    required String kinName,
+    required String kinPhone,
   }) {
     subData.update((val) {
       val!.dob = dob;
@@ -62,8 +73,9 @@ class SubmitDriverDetailsController extends GetxController {
       val.relation = relation;
       val.tinNumber = tinNumber;
       val.licenceNumber = licenceNumber;
-      val.parkArea = parkArea;
       val.gender = gender;
+      val.kinName = kinName;
+      val.kinPhone = kinPhone;
     });
   }
 

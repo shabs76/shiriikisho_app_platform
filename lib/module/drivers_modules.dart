@@ -15,6 +15,11 @@ class OnReviewDriverId {
   OnReviewDriverId({required this.driverId});
 }
 
+class OnUpdateDriverId {
+  String driverId;
+  OnUpdateDriverId({required this.driverId});
+}
+
 class LoginFiDataModule {
   String state;
   String info;
@@ -115,9 +120,13 @@ class FullDriverDetailsModule {
   String idPicture;
   String passport;
   String insurance;
+  String chama;
+  String kinName;
+  String kinPhone;
   String status;
   FullDriverDetailsModule(
-      {required this.dob,
+      {required this.chama,
+      required this.dob,
       required this.driverId,
       required this.email,
       required this.fname,
@@ -126,6 +135,8 @@ class FullDriverDetailsModule {
       required this.idPicture,
       required this.idType,
       required this.insurance,
+      required this.kinName,
+      required this.kinPhone,
       required this.licenceNumber,
       required this.lname,
       required this.mname,
@@ -158,8 +169,12 @@ class FullDriverDetailsModule {
         'passport': String passport,
         'insurance': String insurance,
         'status': String status,
+        'chama': String chama,
+        'kin_name': String kinName,
+        'kin_phone': String kinPhone,
       } =>
         FullDriverDetailsModule(
+            chama: chama,
             dob: dob,
             driverId: driverId,
             email: email,
@@ -169,6 +184,8 @@ class FullDriverDetailsModule {
             idPicture: idPicture,
             idType: idType,
             insurance: insurance,
+            kinName: kinName,
+            kinPhone: kinPhone,
             licenceNumber: licenceNumber,
             lname: lname,
             mname: mname,

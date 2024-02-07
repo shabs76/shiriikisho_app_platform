@@ -11,7 +11,7 @@ class LoginCodePageMiddleware extends GetMiddleware {
     if (_phoneInitVerification.phoneVerRespo.value.state == 'success') {
       return null;
     } else {
-      return const RouteSettings(name: '/');
+      return const RouteSettings(name: '/sign');
     }
   }
 }
@@ -44,7 +44,7 @@ class LogggedInUserMiddleware extends GetMiddleware {
         inf[DriverPrefences.logSess] != null) {
       return null;
     } else {
-      return const RouteSettings(name: '/');
+      return const RouteSettings(name: '/sign');
     }
   }
 }

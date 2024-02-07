@@ -1,12 +1,11 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:shirikisho_drivers/controlers/input_selects_data_list.dart';
 import 'package:shirikisho_drivers/controlers/registration_info_controllers.dart';
-import 'package:shirikisho_drivers/micro/inputs/select_input.dart';
+import 'package:shirikisho_drivers/micro/inputs/select_with_search.dart';
 import 'package:shirikisho_drivers/micro/inputs/text_input_sicon.dart';
 import 'package:shirikisho_drivers/micro/styles.dart';
-import 'package:shirikisho_drivers/module/registration_modules.dart';
 import 'package:shirikisho_drivers/special/special_fun.dart';
 
 class RegistrationPersonal extends StatefulWidget {
@@ -20,16 +19,17 @@ class _RegistrationPersonalState extends State<RegistrationPersonal> {
   final TextEditingController _residenceController = TextEditingController();
   final TextEditingController _licenseNumberController =
       TextEditingController();
-  final RegistrationInputListController registrationInputListController =
-      Get.put(RegistrationInputListController());
-  late List<ParkAreaModule> _parks;
-  final Map<String, String> _parkNameIdMap = {};
+  final TextEditingController _kinNameController = TextEditingController();
+  final TextEditingController _kinPhoneController = TextEditingController();
   DateTime currentDate = DateTime.now();
   String selectedDate = '';
   String _errorForm = '';
   final Map<String, String> _allSelectInputs = {};
   final SubmitDriverDetailsController _submitDriverDetailsController =
       Get.put(SubmitDriverDetailsController());
+
+  final GlobalKey<DropdownSearchState<String>> dropdownKey = GlobalKey();
+  final GlobalKey<DropdownSearchState<String>> dropdownKeyGen = GlobalKey();
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -53,7 +53,7 @@ class _RegistrationPersonalState extends State<RegistrationPersonal> {
     setState(() {
       _errorForm = '';
     });
-    List<String> selectKeys = ['gender', 'parkArea', 'relation'];
+    List<String> selectKeys = ['gender', 'relation'];
     if (selectedDate == '') {
       setState(() {
         _errorForm = 'Tafadhali changua tarehe ya kuzaliwa';
@@ -74,14 +74,29 @@ class _RegistrationPersonalState extends State<RegistrationPersonal> {
         _errorForm = 'Tafadhali jaza makazi yako kwa usahihi';
       });
       return 0;
+    } else // validate info from the form
+    if (!hasThreeNames(_kinNameController.text)) {
+      setState(() {
+        _errorForm =
+            'Hakikisha umeweka majina yote matatu ya mtu wako wa karibu';
+      });
+      return 0;
+    } else if (!isValidPhoneNumber(
+        '+255${_kinPhoneController.text.substring(1)}')) {
+      setState(() {
+        _errorForm =
+            'Namba ya simu sio sahihi tafadhali hakikisha. Na ujaribu tena';
+      });
+      return 0;
     }
     _submitDriverDetailsController.updatePersonalInfo(
         residence: _residenceController.text,
         relation: _allSelectInputs['relation']!,
         tinNumber: 'notset',
         licenceNumber: _licenseNumberController.text,
-        parkArea: _allSelectInputs['parkArea']!,
         dob: selectedDate,
+        kinName: _kinNameController.text,
+        kinPhone: '255${_kinPhoneController.text.substring(1)}',
         gender: _allSelectInputs['gender']!);
     Get.toNamed('/reg/vehicle');
     return 1;
@@ -109,12 +124,6 @@ class _RegistrationPersonalState extends State<RegistrationPersonal> {
   @override
   void initState() {
     super.initState();
-    _parks = registrationInputListController.regiList.value.park;
-    _parks.insert(
-        0, ParkAreaModule(parkId: '', parkName: 'Chagua', parkSize: 0));
-    for (var i = 0; i < _parks.length; i++) {
-      _parkNameIdMap[_parks[i].parkName] = _parks[i].parkId;
-    }
   }
 
   @override
@@ -125,7 +134,7 @@ class _RegistrationPersonalState extends State<RegistrationPersonal> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Taarifa Binafsi & Chama',
+          'Taarifa Binafsi',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         bottom: PreferredSize(
@@ -180,41 +189,70 @@ class _RegistrationPersonalState extends State<RegistrationPersonal> {
                         const Icon(Symbols.expand_more_rounded)
                       ],
                     )),
-                SelectInputNormal(
-                    itemz: const ['Chagua', 'Mwanamume', 'Mwanamke'],
-                    selecedFun: (item) {
-                      setState(() {
-                        _allSelectInputs['gender'] = item;
-                      });
-                    },
-                    fillcolor: const Color(0xFFFFFFFF),
-                    borderColor: const Color(0xFFC7D3DD),
-                    focusedColor: Theme.of(context).colorScheme.primary,
-                    icon: Symbols.expand_more_rounded,
-                    icolor:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.7),
-                    labelText: "Chagua Jinsia",
-                    labelStyles: labelStyle),
-                SelectInputNormal(
-                    itemz: const [
-                      'Chagua',
-                      'Sijao/Sijaolewa',
-                      'Nimeolewa/Nimeoa',
-                      "Mjane"
-                    ],
-                    selecedFun: (item) {
-                      setState(() {
-                        _allSelectInputs['relation'] = item;
-                      });
-                    },
-                    fillcolor: const Color(0xFFFFFFFF),
-                    borderColor: const Color(0xFFC7D3DD),
-                    focusedColor: Theme.of(context).colorScheme.primary,
-                    icon: Symbols.expand_more_rounded,
-                    icolor:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.7),
-                    labelText: "Mahusiano",
-                    labelStyles: labelStyle),
+                SelectWithSearchInput(
+                  borderColor: const Color(0xFFC7D3DD),
+                  dropdownKey: dropdownKeyGen,
+                  fillcolor: Colors.white,
+                  focusedColor: Theme.of(context).colorScheme.primary,
+                  itemz: const ['Mwanamume', 'Mwanamke'],
+                  selecedFun: (itm) {
+                    setState(() {
+                      _allSelectInputs['gender'] = itm;
+                    });
+                  },
+                  labelText: 'Chagua Jinsia',
+                  labelStyles: labelStyle,
+                  selectedItem: 'Chagua',
+                ),
+                SelectWithSearchInput(
+                  borderColor: const Color(0xFFC7D3DD),
+                  dropdownKey: dropdownKey,
+                  fillcolor: Colors.white,
+                  focusedColor: Theme.of(context).colorScheme.primary,
+                  itemz: const [
+                    'Sijaoa/Sijaolewa',
+                    'Nimeolewa/Nimeoa',
+                    "Mjane/Mgane"
+                  ],
+                  selecedFun: (itm) {
+                    setState(() {
+                      _allSelectInputs['relation'] = itm;
+                    });
+                  },
+                  labelText: 'Mahusiano',
+                  labelStyles: labelStyle,
+                  selectedItem: 'Chagua',
+                ),
+                TextFieldWithSuIcon(
+                  controller: _kinNameController,
+                  borderColor: const Color(0xFFC7D3DD),
+                  fillcolor: const Color(0xFFFFFFFF),
+                  focusedColor: Theme.of(context).colorScheme.primary,
+                  labelStyles: labelStyle,
+                  labelText: 'Majina ya mtu wa karibu',
+                  type: TextInputType.text,
+                  hintTextz: 'John kiweli Doel',
+                  maxlines: 1,
+                  minLines: 1,
+                  icon: Symbols.person_4_rounded,
+                  icolor:
+                      Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                ),
+                TextFieldWithSuIcon(
+                  controller: _kinPhoneController,
+                  borderColor: const Color(0xFFC7D3DD),
+                  fillcolor: const Color(0xFFFFFFFF),
+                  focusedColor: Theme.of(context).colorScheme.primary,
+                  labelStyles: labelStyle,
+                  labelText: 'Simu ya mtu wa karibu',
+                  type: TextInputType.phone,
+                  hintTextz: '07********',
+                  maxlines: 1,
+                  minLines: 1,
+                  icon: Symbols.call_rounded,
+                  icolor:
+                      Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                ),
                 TextFieldWithSuIcon(
                   controller: _residenceController,
                   borderColor: const Color(0xFFC7D3DD),
@@ -245,27 +283,6 @@ class _RegistrationPersonalState extends State<RegistrationPersonal> {
                   icolor:
                       Theme.of(context).colorScheme.primary.withOpacity(0.7),
                 ),
-                SelectInputNormal(
-                    itemz: _parks.map((parks) => parks.parkName).toList(),
-                    selecedFun: (item) {
-                      setState(() {
-                        // check if selected item has value in the parks map
-                        if (_parkNameIdMap.containsKey(item)) {
-                          _allSelectInputs['parkArea'] =
-                              _parkNameIdMap[item].toString();
-                        } else {
-                          _allSelectInputs['parkArea'] = '';
-                        }
-                      });
-                    },
-                    fillcolor: const Color(0xFFFFFFFF),
-                    borderColor: const Color(0xFFC7D3DD),
-                    focusedColor: Theme.of(context).colorScheme.primary,
-                    icon: Symbols.expand_more_rounded,
-                    icolor:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.7),
-                    labelText: "Chagua Kituo",
-                    labelStyles: labelStyle),
                 const SizedBox(
                   height: 10,
                 ),

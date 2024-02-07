@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="shirikisho_drivers"
+        android:label="Shirikisho Drivers"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

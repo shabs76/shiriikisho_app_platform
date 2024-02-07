@@ -7,10 +7,12 @@ class PictureFormDisplayor extends StatefulWidget {
   final String cardHead;
   final String imagePath;
   final Function reTakeFun;
+  final String nameDis;
   const PictureFormDisplayor(
       {required this.cardHead,
       required this.imagePath,
       required this.reTakeFun,
+      this.nameDis = '',
       super.key});
 
   @override
@@ -60,14 +62,16 @@ class _PictureFormDisplayorState extends State<PictureFormDisplayor> {
                       style: appStyles.defaultButtonStyles().copyWith(
                           minimumSize: const MaterialStatePropertyAll(
                               Size(double.infinity, 45))),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Symbols.undo_rounded),
-                          SizedBox(
+                          const Icon(Symbols.undo_rounded),
+                          const SizedBox(
                             width: 10,
                           ),
-                          Text('Rudia Kuchukua')
+                          Text(widget.nameDis == ''
+                              ? 'Rudia Kuchukua'
+                              : widget.nameDis)
                         ],
                       )),
                 ],

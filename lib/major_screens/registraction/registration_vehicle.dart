@@ -154,7 +154,7 @@ class _RegistrationVehicleState extends State<RegistrationVehicle> {
                               .colorScheme
                               .primary
                               .withOpacity(0.7),
-                          labelText: "Unabina ya Chombo?",
+                          labelText: "Unabima ya Chombo?",
                           labelStyles: labelStyle),
                       const SizedBox(
                         height: 10,
